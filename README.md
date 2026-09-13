@@ -1,6 +1,6 @@
-# 中文 NER（BiLSTM-CRF）——用于敏感数据脱敏
+# NER BiLSTM-CRF
 
-基于 **人民日报标注语料**（People's Daily NER）训练的字符级 **BiLSTM-CRF** 命名实体识别模型，
+基于开源NER语料训练的BiLSTM-CRF命名实体识别模型，
 识别人名（PER）、机构名（ORG）、地名（LOC），并提供开箱即用的**文本脱敏工具**。
 
 - 数据集：<https://github.com/OYE93/Chinese-NLP-Corpus/tree/master/NER/People's%20Daily>
@@ -155,12 +155,6 @@ python anonymize.py --input ../data/samples/sample.csv --output out.csv
 
 支持 `.txt`（整篇）、`.csv`（逐单元格，保持表格结构）、`.jsonl` / `.json`（所有字符串字段）。
 
-### 关于拉丁字母误报（已默认处理）
-
-模型可能在邮箱、网址、编号的拉丁字母片段上产生误报，例如把 `zhangsan@example.com`
-识别成 `zh[机构名]m`，导致原文被改坏。统计显示语料中**不含汉字**的实体仅 31/45518（0.07%），
-因此工具**默认丢弃不含汉字的实体**；含有汉字的实体（如 `TCL集团`）不受影响。
-如需保留原始行为，加 `--keep-ascii-entities`。
 
 ### 长文本
 
@@ -215,18 +209,7 @@ PER（三字人名居多）和 LOC 表现较好。典型错误是**实体边界*
                   └─ Linear(512 → 7)  发射分数 (B, T, 7)
                       └─ CRF          转移约束 + log-sum-exp 前向 + Viterbi 解码
 ```
-
-参数量约 **1.28M**（字符级，无预训练向量）。
-
-CRF 为**手写实现**（不依赖 `torchcrf`），并已用暴力枚举对拍验证正确性：
-
-- 前向归一化 `log Z` 与穷举所有合法路径的结果一致（误差 < 1e-3）
-- Viterbi 解码分数与穷举最优分数一致
-- 转移约束确实屏蔽了所有非法 BIO 转移
-
-提升方向（当前未启用）：接入预训练字/词向量（如腾讯词向量、`Chinese-Word-Vectors`）
-通常可再提升 3–4 个点；`config.py` 已预留 `EMBED_DIM` 等配置位置。
-
+参数量约 **1.28M**。
 ---
 
 ## 七、注意事项与已知限制
