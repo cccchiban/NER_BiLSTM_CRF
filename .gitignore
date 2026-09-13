@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+
+# IDE / 编辑器
+.idea/
+.vscode/
+*.swp
+
+# 训练日志
+logs/
+
+# 第三方语料仓库（自带 .git，不纳入本项目版本控制）
+_corpus/
